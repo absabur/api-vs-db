@@ -1,4 +1,3 @@
-// app/api/students/route.js
 import { getPaginatedStudents } from "@/lib/getDatas";
 import { NextResponse } from "next/server";
 

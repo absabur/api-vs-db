@@ -105,11 +105,11 @@ export default function StudentPage() {
                   {/* Main Content */}
                   <div className="flex-grow">
                     <div className="flex justify-between items-start">
-                      <Link href={`/student/${member._id}`} className="group">
+                                            <div className="group">
                         <h3 className="text-xl font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
                           {member.name}
                         </h3>
-                      </Link>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
