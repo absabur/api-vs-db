@@ -1,15 +1,52 @@
-import PrintDate from "@/component/PrintDate";
-import { getPaginatedStudents } from "@/lib/getDatas";
 import Link from "next/link";
+import { getPaginatedStudents } from "@/lib/getDatas";
+import { StudentFilters } from "@/component/StudentFilter";
+import PrintDate from "@/component/PrintDate";
 
-export default async function StudentPage() {
-  const { students } = await getPaginatedStudents();
+export default async function StudentPage({ searchParams }) {
+  let params = await searchParams;
+  const page = parseInt(params.page) || 1;
+  const limit = 10;
+  const search = params.search || "";
+  const type = params.type || "";
+  const batch = params.batch || "";
+  const sortBy = params.sortBy || "createDate";
+  const sortOrder = params.sortOrder || "desc";
+
+  // Fetch data in parallel
+  const studentsData = await getPaginatedStudents({
+    page,
+    limit,
+    search,
+    type,
+    batch,
+    sortBy,
+    sortOrder,
+    isActive: true,
+  });
+
+  const students = studentsData.students;
+  const total = studentsData.total;
+  const totalPages = Math.ceil(total / limit);
+
+  // Utility to rebuild query string
+  const buildQuery = (params) => {
+    return Object.entries(params)
+      .filter(([_, value]) => value !== "")
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+      .join("&");
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">
         Student Directory
       </h2>
+
+      {/* Filters Section */}
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+        <StudentFilters />
+      </div>
 
       {students.length === 0 ? (
         <div className="bg-white rounded-lg shadow-md p-8 text-center">
@@ -19,7 +56,7 @@ export default async function StudentPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {students.length > 0 && <PrintDate from="ssr-db" />}
+          <PrintDate from="ssr-db" />
           {students.map((member) => (
             <div
               key={member._id}
@@ -111,12 +148,52 @@ export default async function StudentPage() {
               </div>
             </div>
           ))}
+
+          {/* Pagination */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8">
+            <div className="text-sm text-gray-600">
+              Showing page {page} of {totalPages} ({total} total records)
+            </div>
+            <div className="flex gap-2">
+              {page > 1 && (
+                <Link
+                  href={`?${buildQuery({
+                    search,
+                    type,
+                    batch,
+                    sortBy,
+                    sortOrder,
+                    page: page - 1,
+                  })}`}
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  Previous
+                </Link>
+              )}
+              {page < totalPages && (
+                <Link
+                  href={`?${buildQuery({
+                    search,
+                    type,
+                    batch,
+                    sortBy,
+                    sortOrder,
+                    page: page + 1,
+                  })}`}
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  Next
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
       )}
       <Link
-        className="mt-3 rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+        className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
         href="/"
         rel="noopener noreferrer"
+        prefetch={false}
       >
         Home
       </Link>

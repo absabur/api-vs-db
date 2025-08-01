@@ -24,7 +24,6 @@ const studentSchema = new Schema({
   batch: {
     type: Schema.Types.ObjectId,
     required: [true, "Please enter batch."],
-    ref: "Batch",
   },
   about: String,
   profession: String,

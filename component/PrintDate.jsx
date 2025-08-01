@@ -1,6 +1,6 @@
 "use client";
 const PrintDate = ({ from }) => {
-  console.log(`${from}-end - ${new Date()}`);
+  console.log(`${from}-end - ${new Date().getTime()}`);
   return null;
 };
 
