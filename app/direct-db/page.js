@@ -1,3 +1,4 @@
+import PrintDate from "@/component/PrintDate";
 import { getPaginatedStudents } from "@/lib/getDatas";
 import Link from "next/link";
 
@@ -18,6 +19,7 @@ export default async function StudentPage() {
         </div>
       ) : (
         <div className="space-y-4">
+          {students.length > 0 && <PrintDate from="ssr-db" />}
           {students.map((member) => (
             <div
               key={member._id}

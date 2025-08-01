@@ -1,3 +1,4 @@
+import PrintDate from "@/component/PrintDate";
 import Link from "next/link";
 
 export default async function StudentPage() {
@@ -17,6 +18,7 @@ export default async function StudentPage() {
         </div>
       ) : (
         <div className="space-y-4">
+          {students.length > 0 && <PrintDate from="ssr-api" />}
           {students.map((member) => (
             <div
               key={member._id}
