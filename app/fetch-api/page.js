@@ -3,7 +3,6 @@ import Link from "next/link";
 export default async function StudentPage() {
   const response = await fetch(`${process.env.CLIENT_URL}/api/student`);
   const { students } = await response.json();
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">
